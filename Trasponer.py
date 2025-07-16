@@ -4,8 +4,8 @@ import pandas as pd
 # Carpeta de entrada y salida
 carpeta_entrada = "CsvLimpio"
 carpeta_salida = "CsvMesComoFila"
-
 os.makedirs(carpeta_salida, exist_ok=True)
+
 archivos_procesados = 0
 
 for subcarpeta in os.listdir(carpeta_entrada):
@@ -16,23 +16,24 @@ for subcarpeta in os.listdir(carpeta_entrada):
             if archivo_csv.endswith(".csv"):
                 ruta_csv = os.path.join(ruta_subcarpeta, archivo_csv)
 
-                # Leer el archivo CSV
+                # Leer CSV
                 df = pd.read_csv(ruta_csv)
 
-                # Establecer "AÑO" como índice
+                # Asegurar que AÑO esté como índice
                 df.set_index("AÑO", inplace=True)
 
-                # Transponer el DataFrame: meses como filas, años como columnas
+                # Transponer: meses como filas, años como columnas
                 df_t = df.T
                 df_t.index.name = "MES"
 
-                # Convertir el índice (meses) a entero por si es string
+                # Rellenar NaN con el promedio de cada columna
+                df_t = df_t.fillna(df_t.mean(numeric_only=True))
+
+                # Convertir índice MES a entero (por si está como string)
                 df_t.index = df_t.index.astype(int)
+                df_t.reset_index(inplace=True)  # MES como columna
 
-                # Resetear índice para que MES sea columna
-                df_t.reset_index(inplace=True)
-
-                # Guardar archivo con nuevo nombre
+                # Guardar resultado
                 nombre_sin_ext = os.path.splitext(archivo_csv)[0]
                 nombre_traspuesto = nombre_sin_ext + "_MesComoFila.csv"
                 carpeta_salida_sub = os.path.join(carpeta_salida, subcarpeta)
@@ -44,4 +45,4 @@ for subcarpeta in os.listdir(carpeta_entrada):
 
                 print(f"✅ Guardado: {ruta_salida}")
 
-print(f"\n📈 Se generaron {archivos_procesados} archivos con meses como números (1 al 12).")
+print(f"\n📈 Se procesaron {archivos_procesados} archivos con NaN rellenados por promedio.")
