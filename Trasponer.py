@@ -19,30 +19,29 @@ for subcarpeta in os.listdir(carpeta_entrada):
                 # Leer CSV
                 df = pd.read_csv(ruta_csv)
 
-                # Asegurar que AÑO esté como índice
+                # Asegurar que AÑO sea índice
                 df.set_index("AÑO", inplace=True)
 
-                # Transponer: meses como filas, años como columnas
+                # Transponer (meses como filas, años como columnas)
                 df_t = df.T
                 df_t.index.name = "MES"
 
                 # Rellenar NaN con el promedio de cada columna
                 df_t = df_t.fillna(df_t.mean(numeric_only=True))
 
-                # Convertir índice MES a entero (por si está como string)
+                # Asegurar que MES sea numérico
                 df_t.index = df_t.index.astype(int)
                 df_t.reset_index(inplace=True)  # MES como columna
 
-                # Guardar resultado
-                nombre_sin_ext = os.path.splitext(archivo_csv)[0]
-                nombre_traspuesto = nombre_sin_ext + "_MesComoFila.csv"
+                # Ruta de salida con el mismo nombre que el archivo original
                 carpeta_salida_sub = os.path.join(carpeta_salida, subcarpeta)
                 os.makedirs(carpeta_salida_sub, exist_ok=True)
-                ruta_salida = os.path.join(carpeta_salida_sub, nombre_traspuesto)
+                ruta_salida = os.path.join(carpeta_salida_sub, archivo_csv)
 
+                # Guardar archivo
                 df_t.to_csv(ruta_salida, index=False)
                 archivos_procesados += 1
 
                 print(f"✅ Guardado: {ruta_salida}")
 
-print(f"\n📈 Se procesaron {archivos_procesados} archivos con NaN rellenados por promedio.")
+print(f"\n📈 Se procesaron {archivos_procesados} archivos. Meses como filas, sin renombrar archivos.")
