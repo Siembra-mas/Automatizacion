@@ -2,8 +2,12 @@ import os
 import pandas as pd
 import csv
 
+#Inserta el nombre del archivo para que se autonombren 
+Nombre = "TEMPOAL"
+#-------------------------------------------------------
+
 # Ruta del archivo de origen
-ruta_archivo = r"TXT/AZUETA.txt"
+ruta_archivo = r"TXT/" + Nombre + ".txt"
 
 # Diccionario con los nombres a buscar y sus etiquetas de salida
 bloques_datos = {
@@ -18,7 +22,7 @@ bloques_datos = {
 }
 
 # Carpeta de salida para CSV limpio
-CarpetaNom = "AZUETA"
+CarpetaNom = Nombre
 
 for Nombre, Etiqueta in bloques_datos.items():
     datos = []
